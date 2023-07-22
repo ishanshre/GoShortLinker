@@ -3,6 +3,8 @@ createMongoDBcontainer:
 
 startContainer:
 	docker start UrlShortnerMongoDB
+stopContainer:
+	docker stop UrlShortnerMongoDB
 
 run:
 	go run cmd/api/main.go  
