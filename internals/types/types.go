@@ -7,7 +7,7 @@ import (
 )
 
 type Request struct {
-	LongUrl string `json:"long_url"`
+	LongUrl string `json:"long_url" validate:"required,url"`
 }
 
 type Url struct {
