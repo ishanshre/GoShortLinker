@@ -42,3 +42,7 @@ func StatusCreated(w http.ResponseWriter, data any) {
 func StatusAccepted(w http.ResponseWriter, data any) {
 	WriteJson(w, http.StatusAccepted, data)
 }
+
+func StatusInternalServerError(w http.ResponseWriter, err string) {
+	WriteJson(w, http.StatusInternalServerError, err)
+}

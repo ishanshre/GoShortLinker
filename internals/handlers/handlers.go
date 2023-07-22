@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/ishanshre/GoShortLinker/internals/database"
@@ -19,6 +20,7 @@ import (
 
 type Handlers interface {
 	ShortenURL(w http.ResponseWriter, r *http.Request)
+	ResolveURL(w http.ResponseWriter, r *http.Request)
 }
 
 type handler struct {
@@ -64,4 +66,22 @@ func (h *handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	helpers.StatusCreated(w, res)
+}
+
+func (h *handler) ResolveURL(w http.ResponseWriter, r *http.Request) {
+	urlCode := chi.URLParam(r, "url_code")
+	exists, err := h.DB.UrlCodeExists(urlCode)
+	if err != nil {
+		helpers.StatusInternalServerError(w, err.Error())
+		return
+	}
+	if exists {
+		url, err := h.DB.GetUrl(urlCode)
+		if err != nil {
+			helpers.StatusInternalServerError(w, err.Error())
+			return
+		}
+		http.Redirect(w, r, url.LongUrl, http.StatusPermanentRedirect)
+	}
+	helpers.StatusBadRequest(w, "invalid url")
 }
