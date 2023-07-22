@@ -58,7 +58,7 @@ func (h *handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		ShortUrl:  shortURL,
 		LongUrl:   url.LongUrl,
 		CreatedAt: time.Now(),
-		ExpiredAt: time.Now().Add(time.Hour * -24),
+		ExpiredAt: time.Now().Add(time.Hour * 24),
 	}
 	res, err := h.DB.InsertUrl(&shortURLConfig)
 	if err != nil {
