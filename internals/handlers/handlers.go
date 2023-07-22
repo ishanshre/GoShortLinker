@@ -58,7 +58,7 @@ func (h *handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		ShortUrl:  shortURL,
 		LongUrl:   url.LongUrl,
 		CreatedAt: time.Now(),
-		ExpiredAt: time.Now().Add(time.Hour * 24),
+		ExpiredAt: time.Now().Add(time.Hour * -24),
 	}
 	res, err := h.DB.InsertUrl(&shortURLConfig)
 	if err != nil {
@@ -79,6 +79,14 @@ func (h *handler) ResolveURL(w http.ResponseWriter, r *http.Request) {
 		url, err := h.DB.GetUrl(urlCode)
 		if err != nil {
 			helpers.StatusInternalServerError(w, err.Error())
+			return
+		}
+		if helpers.IsExpired(url.ExpiredAt) {
+			if err := h.DB.DeleteUrlCode(url.UrlCode); err != nil {
+				helpers.StatusBadRequest(w, err.Error())
+				return
+			}
+			helpers.StatusBadRequest(w, "url expired")
 			return
 		}
 		http.Redirect(w, r, url.LongUrl, http.StatusPermanentRedirect)

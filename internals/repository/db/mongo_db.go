@@ -48,3 +48,21 @@ func (m *mongoDbRepo) UrlCodeExists(urlCode string) (bool, error) {
 	}
 	return true, nil
 }
+
+func (m *mongoDbRepo) DeleteUrlCode(urlCode string) error {
+	ctx, cancel := context.WithTimeout(m.Ctx, timeout)
+	defer cancel()
+
+	filter := bson.M{"url_code": urlCode}
+	res, err := m.DB.GetUrlCollections().DeleteOne(ctx, filter)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return errors.New("url does not exists")
+		}
+		return errors.New("error in deleting url")
+	}
+	if res.DeletedCount == 0 {
+		return errors.New("error in deleting url or url does not exists")
+	}
+	return nil
+}

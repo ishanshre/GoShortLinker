@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 func EnforceHttp(url string) string {
@@ -45,4 +46,8 @@ func StatusAccepted(w http.ResponseWriter, data any) {
 
 func StatusInternalServerError(w http.ResponseWriter, err string) {
 	WriteJson(w, http.StatusInternalServerError, err)
+}
+
+func IsExpired(expirationTime time.Time) bool {
+	return time.Now().After(expirationTime)
 }

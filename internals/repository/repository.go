@@ -6,4 +6,5 @@ type DbRepository interface {
 	InsertUrl(u *types.Url) (*types.Url, error)
 	GetUrl(urlCode string) (*types.Url, error)
 	UrlCodeExists(urlCode string) (bool, error)
+	DeleteUrlCode(urlCode string) error
 }
